@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AlarmApp</string>
+    <string name = "welcome_activity_main">Welcome to the alarm app!</string>
+    <string name = "add_alarm_activity_main">+</string>
+</resources>
