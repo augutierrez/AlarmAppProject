@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.add_alarm: {
                 Toast.makeText(this, "Creating Alarm", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "add alarm button was clicked");
-                Intent intent = new Intent(MainActivity.this, ActivityTwo.class);
+                Intent intent = new Intent(MainActivity.this, MakeAlarm.class);
                 startActivity(intent);
                 break;
             }
