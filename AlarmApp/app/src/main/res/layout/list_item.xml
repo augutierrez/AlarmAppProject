@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent" android:layout_height="?android:attr/listPreferredItemHeightLarge"
+    android:background="@drawable/border">
+
+    <TextView
+        android:id="@+id/alarm_message_text_view"
+        android:layout_width="289dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:gravity="center_vertical"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/alarm_time_text_view"
+        android:layout_width="306dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/alarm_message_text_view"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="37dp"
+        android:layout_marginRight="37dp"
+        android:layout_toStartOf="@id/alarm_switch"
+        android:layout_toLeftOf="@id/alarm_switch"
+        android:textSize="38dp" />
+
+    <Switch
+        android:id="@+id/alarm_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="35dp"
+        android:layout_marginLeft="35dp"
+        android:layout_toEndOf="@id/alarm_message_text_view"
+        android:layout_toRightOf="@id/alarm_message_text_view" />
+</RelativeLayout>

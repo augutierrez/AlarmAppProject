@@ -7,22 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -31,6 +22,7 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
     PendingIntent pendingIntent;
     Intent intent;
     TimePicker tp; // the time chosen
+    EditText message;
 
    private static Button saveButton = null;
     @Override
@@ -38,6 +30,7 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.time_picker);
 
+        message = (EditText) findViewById(R.id.message_edit_text);
         tp = (TimePicker) findViewById(R.id.time_picker);
         saveButton = (Button) findViewById(R.id.save_button);
         saveButton.setOnClickListener(this);
@@ -81,20 +74,46 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd, EEE");
         Log.i("timep", sdf.format(cal.getTime()));
         //int ms = (hour * 60 * 60 * 1000) + (minute * 60 * 1000);
 
+        //make alarm and save it
+        /*
+        I think before I can figure out how to save and destroy specific alarms,
+        I would need a way of showing the current alarms so that I can select them and destroy them.
+        I need too keep them in some sort of array.
+         */
+
+        String text = message.getText().toString();
+        if(text.isEmpty()){
+            text = sdf.format(cal.getTime());
+        }
+        Alarm alarm = new Alarm(cal, pendingIntent, intent, text);
+        //alarm.setMessage("PATO!");
+
         intent = new Intent(this, AlarmService.class);
+        Log.i("message", alarm.getMessage());
+        intent.putExtra("message",  alarm.getMessage());
         pendingIntent = PendingIntent.getService(this.getApplicationContext(), 234324243, intent, 0);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis()/* + (x * 1000)*/, pendingIntent);
-
 
         Calendar curr = Calendar.getInstance();
 
 
         Toast.makeText(this, "Alarm set in " + (cal.getTimeInMillis() - curr.getTimeInMillis())/1000 + " seconds", Toast.LENGTH_LONG).show();
+
+        //saving
+
+        ArrayList<Alarm> list = AlarmSaver.list;
+        list.add(alarm);
+        //save new alarm into memory
+        AlarmSaver alarmSaver = new AlarmSaver(this); //this is prob inefficient to keep creating
+        alarmSaver.saveAlarm();
+
+        Intent intent = new Intent(MakeAlarm.this, MainActivity.class);
+        startActivity(intent);
     }
 
     public void destroyAlarm(){
