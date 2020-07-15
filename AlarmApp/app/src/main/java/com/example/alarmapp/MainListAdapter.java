@@ -3,7 +3,6 @@ package com.example.alarmapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder> {
-        private ArrayList<Alarm> listdata;
+public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHolder> {
+        private ArrayList<Alarm> listData;
 
-        public MyListAdapter(ArrayList<Alarm> listdata) {
-            this.listdata = listdata;
+        public MainListAdapter(ArrayList<Alarm> listData) {
+            this.listData = listData;
         }
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,9 +28,9 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            final Alarm myListData = listdata.get(position);
-            holder.message.setText(listdata.get(position).getMessage());
-            holder.time.setText(listdata.get(position).getTime());
+            final Alarm myListData = listData.get(position);
+            holder.message.setText(listData.get(position).getMessage());
+            holder.time.setText(listData.get(position).getTime());
             if(!holder.alarmSwitch.isChecked()){
                 holder.alarmSwitch.toggle();
             }
@@ -57,7 +56,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
 
         @Override
         public int getItemCount() {
-            return listdata.size();
+            return listData.size();
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder {

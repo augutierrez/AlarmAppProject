@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 
-public class AlarmOn extends Activity {
+public class AlarmOnActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class AlarmOn extends Activity {
             @Override
             public void onClick(View v) {
                 stopAlarm();
-                Intent intent = new Intent(AlarmOn.this, MainActivity.class);
+                Intent intent = new Intent(AlarmOnActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });

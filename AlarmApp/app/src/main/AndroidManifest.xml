@@ -17,14 +17,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MakeAlarm">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        <activity android:name=".MakeAlarmActivity"
+            android:parentActivityName=".MainActivity">
         </activity>
-        <activity android:name=".AlarmOn" />
+
+        <activity android:name=".DeleteAlarmsActivity"/>
+
+        <activity android:name=".DeleteTestActivity"/>
+
+
+        <activity android:name=".AlarmOnActivity" />
 
         <service android:name=".AlarmService"/>
 

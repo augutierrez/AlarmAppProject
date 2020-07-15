@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class MakeAlarm extends Activity implements View.OnClickListener{
+public class MakeAlarmActivity extends Activity implements View.OnClickListener{
     AlarmManager alarmManager;
     PendingIntent pendingIntent;
     Intent intent;
@@ -52,7 +52,7 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(MakeAlarm.this, MainActivity.class);
+        Intent intent = new Intent(MakeAlarmActivity.this, MainActivity.class);
         Toast.makeText(this, "Alarm on!", Toast.LENGTH_SHORT).show();
         //check if its a valid time, otherwise just toast
         startAlarm();
@@ -89,12 +89,11 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
         if(text.isEmpty()){
             text = sdf.format(cal.getTime());
         }
-        Alarm alarm = new Alarm(cal, pendingIntent, intent, text);
-        //alarm.setMessage("PATO!");
+
 
         intent = new Intent(this, AlarmService.class);
-        Log.i("message", alarm.getMessage());
-        intent.putExtra("message",  alarm.getMessage());
+        Log.i("message", text);
+        intent.putExtra("message",  text); // so that we can easily retrieve it for the notification page
         pendingIntent = PendingIntent.getService(this.getApplicationContext(), 234324243, intent, 0);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis()/* + (x * 1000)*/, pendingIntent);
@@ -105,14 +104,28 @@ public class MakeAlarm extends Activity implements View.OnClickListener{
         Toast.makeText(this, "Alarm set in " + (cal.getTimeInMillis() - curr.getTimeInMillis())/1000 + " seconds", Toast.LENGTH_LONG).show();
 
         //saving
-
+        Alarm alarm = new Alarm(cal, pendingIntent, intent, alarmManager, text);
         ArrayList<Alarm> list = AlarmSaver.list;
-        list.add(alarm);
+        if(alarm != null){
+            Log.i("MakeAlarm", "alarm was good");
+            list.add(alarm);
+            Log.i("MakeAlarm", "list size : " + list.size());
+        }
+        else{
+            Log.i("MakeAlarm", "alarm was null");
+        }
+        PendingIntent pi = alarm.pendingIntent;
+        if(pi != null){
+            Log.i("MakeAlarm", "pi is good");
+        }
+        else{
+            Log.i("MakeAlarm", "pi was null");
+        }
         //save new alarm into memory
         AlarmSaver alarmSaver = new AlarmSaver(this); //this is prob inefficient to keep creating
         alarmSaver.saveAlarm();
 
-        Intent intent = new Intent(MakeAlarm.this, MainActivity.class);
+        Intent intent = new Intent(MakeAlarmActivity.this, MainActivity.class);
         startActivity(intent);
     }
 

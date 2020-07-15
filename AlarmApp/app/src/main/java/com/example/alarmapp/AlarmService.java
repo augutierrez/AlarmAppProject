@@ -25,7 +25,7 @@ public class AlarmService extends Service {
         r = RingtoneManager.getRingtone(getApplicationContext(), notification);
         r.play();
         Toast.makeText(getApplicationContext(), "Alarm...", Toast.LENGTH_LONG).show();
-        Intent intent1 = new Intent(this, AlarmOn.class);
+        Intent intent1 = new Intent(this, AlarmOnActivity.class);
         String message = intent.getStringExtra("message");
         intent1.putExtra("message", message);
         intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
