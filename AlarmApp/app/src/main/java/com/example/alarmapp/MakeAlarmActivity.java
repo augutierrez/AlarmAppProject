@@ -36,13 +36,9 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         saveButton.setOnClickListener(this);
     }
 
-
-
     @Override
     protected void onResume() {
-
         super.onResume();
-
     }
 
     @Override
@@ -60,14 +56,10 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
     }
 
     public void startAlarm(){
-        //EditText text = findViewById(R.id.time);
-        //int x = Integer.parseInt(text.getText().toString());
-
         int hour = tp.getHour();
         int minute = tp.getMinute();
 
         //eventually we can get the calendar year,m, and d info too.
-
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.MINUTE, minute);
@@ -75,52 +67,18 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         cal.set(Calendar.MILLISECOND, 0);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd, EEE");
-        Log.i("timep", sdf.format(cal.getTime()));
-        //int ms = (hour * 60 * 60 * 1000) + (minute * 60 * 1000);
-
-        //make alarm and save it
-        /*
-        I think before I can figure out how to save and destroy specific alarms,
-        I would need a way of showing the current alarms so that I can select them and destroy them.
-        I need too keep them in some sort of array.
-         */
-
         String text = message.getText().toString();
+
         if(text.isEmpty()){
             text = sdf.format(cal.getTime());
         }
 
-
-        intent = new Intent(this, AlarmService.class);
-        Log.i("message", text);
-        intent.putExtra("message",  text); // so that we can easily retrieve it for the notification page
-        pendingIntent = PendingIntent.getService(this.getApplicationContext(), 234324243, intent, 0);
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis()/* + (x * 1000)*/, pendingIntent);
-
-        Calendar curr = Calendar.getInstance();
-
-
-        Toast.makeText(this, "Alarm set in " + (cal.getTimeInMillis() - curr.getTimeInMillis())/1000 + " seconds", Toast.LENGTH_LONG).show();
-
         //saving
         Alarm alarm = new Alarm(cal, pendingIntent, intent, alarmManager, text);
+        alarm.turnOnAlarm(getApplicationContext());
+
         ArrayList<Alarm> list = AlarmSaver.list;
-        if(alarm != null){
-            Log.i("MakeAlarm", "alarm was good");
-            list.add(alarm);
-            Log.i("MakeAlarm", "list size : " + list.size());
-        }
-        else{
-            Log.i("MakeAlarm", "alarm was null");
-        }
-        PendingIntent pi = alarm.pendingIntent;
-        if(pi != null){
-            Log.i("MakeAlarm", "pi is good");
-        }
-        else{
-            Log.i("MakeAlarm", "pi was null");
-        }
+        list.add(alarm);
         //save new alarm into memory
         AlarmSaver alarmSaver = new AlarmSaver(this); //this is prob inefficient to keep creating
         alarmSaver.saveAlarm();
@@ -133,6 +91,4 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         alarmManager.cancel(pendingIntent); // this is needed to cancel the alarm before it even goes off
         stopService(intent); // this is needed to silence the alarm once it does go off
     }
-
-
 }

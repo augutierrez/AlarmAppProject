@@ -3,8 +3,10 @@ package com.example.alarmapp;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -45,7 +47,7 @@ public class Alarm implements Serializable {
             Log.i("Alarm", "Pending intent is null (constructor)");
         }
         else{
-            Log.i("Alarm", "pedngin intent is not nulll");
+            Log.i("Alarm", "pending intent is not null");
         }
         this.intent = intent;
         this.alarmManager = alarmManager;
@@ -91,8 +93,26 @@ public class Alarm implements Serializable {
     }
 
     public void turnOffAlarm(){
-
-        pendingIntent.cancel();
+        if(pendingIntent != null){
+            pendingIntent.cancel();
+        }
         Log.i("Alarm", "turned off Alarm");
+    }
+
+    public void turnOnAlarm(Context context){
+        intent = new Intent(context, AlarmService.class);
+       // this.intent = intent;
+        Log.i("message", message);
+        intent.putExtra("message",  message); // so that we can easily retrieve it for the notification page
+        Calendar currTime = Calendar.getInstance();
+        long num = currTime.getTimeInMillis();
+        pendingIntent = PendingIntent.getService(context, (int)num, intent, 0);
+        //this.pendingIntent = pendingIntent;
+
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+
+        Calendar curr = Calendar.getInstance();
+        Toast.makeText(context, "Alarm set in " + (cal.getTimeInMillis() - curr.getTimeInMillis())/1000 + " seconds", Toast.LENGTH_LONG).show();
     }
 }

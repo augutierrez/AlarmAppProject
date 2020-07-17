@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ArrayList<Alarm> list = alarmSaver.list;
         if(list == null){
-            alarmSaver.makeNewList();
+            alarmSaver.loadAlarm();
             list = alarmSaver.list;
         }
 
