@@ -3,7 +3,7 @@
 #### This is the very first Android app I made!
 
 ## Summary:
-#### This is an app that is capable of setting alarms for you. <br /> It lets you set up the time you want your alarm to sound as well as a message to display when it sounds.</p>
+#### This is an app that is capable of setting alarms for you. <br /> It lets you set up the time you want your alarm to sound as well as a message to display when it sounds. <br /> This app was a good challenge because it forced me to learn different aspects of Android mobile development such as: permissions, services, and broadcasts and receivers.
 
 ## First Event:
 <h2 align="center">This is the welcome page, click the + button to create your first alarm.</h2>
