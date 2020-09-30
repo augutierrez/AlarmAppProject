@@ -22,14 +22,10 @@ public class Alarm implements Serializable {
     public transient PendingIntent pendingIntent;
     private transient Intent intent;
 
-    /*
-    In the case that the user turns off the phone, we would restore the intent calendar,
-    but the pendingIntent and intent would have have to be restated/ updated.
-
-    Therefore, we would loop through the saved calendars and just give them new p intents and intents.
-
-    I might have to create updateIntent() methods, if we want to let the user "edit"
-     */
+    public Alarm(Calendar cal, String message){
+        this.cal = cal;
+        this.message = message;
+    }
 
     public Alarm(Calendar cal, PendingIntent pendingIntent, Intent intent, AlarmManager alarmManager) {
         this.cal = cal;
@@ -100,19 +96,26 @@ public class Alarm implements Serializable {
     }
 
     public void turnOnAlarm(Context context){
-        intent = new Intent(context, AlarmService.class);
-       // this.intent = intent;
+        intent = new Intent(context, AlarmReceiver.class);
         Log.i("message", message);
         intent.putExtra("message",  message); // so that we can easily retrieve it for the notification page
         Calendar currTime = Calendar.getInstance();
         long num = currTime.getTimeInMillis();
-        pendingIntent = PendingIntent.getService(context, (int)num, intent, 0);
-        //this.pendingIntent = pendingIntent;
-
+        pendingIntent = PendingIntent.getBroadcast(context, (int) num, intent, 0);
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-
         Calendar curr = Calendar.getInstance();
         Toast.makeText(context, "Alarm set in " + (cal.getTimeInMillis() - curr.getTimeInMillis())/1000 + " seconds", Toast.LENGTH_LONG).show();
+    }
+
+    public boolean isValid(){
+        if(!switchWidget){
+            return false;
+        }
+        Calendar curr = Calendar.getInstance();
+        if(cal.getTimeInMillis() < curr.getTimeInMillis()){
+            return false;
+        }
+        return true;
     }
 }

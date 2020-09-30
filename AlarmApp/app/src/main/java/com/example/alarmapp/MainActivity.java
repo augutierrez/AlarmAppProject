@@ -1,5 +1,6 @@
 package com.example.alarmapp;
 
+import androidx.annotation.IntDef;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -58,6 +60,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         //improves performance since the list stays a single size
         recyclerView.setHasFixedSize(true);
+        if(alarms.size()<=0){
+            recyclerView.setVisibility(View.GONE);
+        }
+
+        TextView textView = (TextView) findViewById(R.id.textView3);
+        if(alarms.size()>0){
+            textView.setVisibility(View.GONE);
+        }
+
+
 
         //using a linear layout
         layoutManager = new LinearLayoutManager(this);
@@ -73,7 +85,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         add_alarm_button.setOnClickListener(this);
 
         Button editButton = (Button) findViewById(R.id.edit_main_button);
-        editButton.setOnClickListener(this);
+
+        if(alarms.size()<=0){
+            editButton.setVisibility(View.GONE);
+        }
+        else{
+            editButton.setOnClickListener(this);
+        }
+
+
     }
 
     @Override

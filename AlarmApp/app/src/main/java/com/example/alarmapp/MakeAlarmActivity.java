@@ -74,7 +74,7 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         }
 
         //saving
-        Alarm alarm = new Alarm(cal, pendingIntent, intent, alarmManager, text);
+        Alarm alarm = new Alarm(cal, text);
         alarm.turnOnAlarm(getApplicationContext());
 
         ArrayList<Alarm> list = AlarmSaver.list;
