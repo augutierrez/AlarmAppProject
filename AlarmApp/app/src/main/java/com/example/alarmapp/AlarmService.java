@@ -50,6 +50,28 @@ public class AlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId){
         Log.i(TAG, "onStartCommand called");
         this.intent = intent;
+
+        String action = intent.getAction();
+        if(action == ACTION_SNOOZE){
+            //snooze
+        }
+        else if(action == ACTION_CANCEL){
+            //cancel
+        }
+        else{
+            //start
+            startAlarm();
+        }
+        return START_STICKY;
+    }
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        Log.i(TAG, "The service has been createdd");
+    }
+
+    private void startAlarm(){
         Notification notification1 = createNotification();
         startForeground(notificationID, notification1);
 
@@ -70,7 +92,7 @@ public class AlarmService extends Service {
                 .getSystemService(Context.AUDIO_SERVICE);
 
         mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ALARM).build()
+                .setUsage(AudioAttributes.USAGE_ALARM).build()
         );
 
         try {
@@ -98,15 +120,6 @@ public class AlarmService extends Service {
         }
 
         Toast.makeText(getApplicationContext(), "Alarm...", Toast.LENGTH_LONG).show();
-        return START_STICKY;
-    }
-
-    @Override
-    public void onCreate(){
-        super.onCreate();
-        Log.i(TAG, "The service has been created");
-//        Notification notification = createNotification();
-//        startForeground(notificationID, notification);
     }
 
     private Notification createNotification(){
@@ -124,12 +137,14 @@ public class AlarmService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
 
         ///////////////////////////////////////////////////////////////////////////////////
-        Intent snooze = new Intent(context, AlarmReceiver.class);
+        //TODO make sure to pass the other extras
+        //TODO add an alarm ID as an extra to be able to circle back
+        Intent snooze = new Intent(context, AlarmService.class);
         snooze.setAction(ACTION_SNOOZE);
         snooze.putExtra("notificationID", notificationID);
         PendingIntent snoozePendingIntent = PendingIntent.getActivity(context, 0, snooze, 0);
 
-        Intent cancel = new Intent(context, AlarmReceiver.class);
+        Intent cancel = new Intent(context, AlarmService.class);
         snooze.setAction(ACTION_CANCEL);
         snooze.putExtra("notificationID", notificationID);
         PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, 0, cancel, 0);
@@ -158,7 +173,8 @@ public class AlarmService extends Service {
                 .setContentTitle("Alarm App")
                 .setContentText(message)
                 .setContentIntent(pendingIntent)
-                .setContentInfo("Alarm fired");
+                .setContentInfo("Alarm fired")
+                .addAction(R.drawable.snooze, "snooze", snoozePendingIntent);
         //notificationManager.notify(1, notificationBuilder.build());
 
 
