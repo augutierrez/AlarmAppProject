@@ -1,6 +1,5 @@
 package com.example.alarmapp;
 
-import androidx.annotation.IntDef;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,12 +14,25 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import AlarmClasses.Alarm;
+import AlarmClasses.AlarmSaver;
+
+//TODO Fix the UI on the main page.  If an alarm time has passed, it should have the button switched off.
+//TODO Alarms don't reload when the app starts again, it doesn't sound
+//TODO Separate tests into their own folder
+//TODO Check the edit button and the Deleting process, make sure it works fine.
+//TODO Write test cases that go through the app
+
+/**
+ * The main function, the app starts here.
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private AlarmSaver alarmSaver;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private Boolean AlarmsLoaded;
+
     private String TAG = "MainActivity";
+    //List of alarms
     private ArrayList<Alarm> alarms;
 
     @Override
@@ -28,23 +40,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //load previous alarms if any
-
-        Log.i(TAG, "FALSE");
-
+        //alarmSaver is the class that helps us load previous alarms, or create an empty list if none exist.
         alarmSaver = new AlarmSaver(this);
-        //alarmSaver.loadAlarm();
-
-        ArrayList<Alarm> list = alarmSaver.list;
-        if(list == null){
+        alarms = alarmSaver.list;
+        if(alarms == null){
             alarmSaver.loadAlarm();
-            list = alarmSaver.list;
+            alarms = alarmSaver.list;
         }
 
+        Log.i(TAG, "alarms list size in main : " + alarms.size());
 
-        Log.i("main", "list size in mian : " + list.size());
-        if(list.size()>0){
-            if(list.get(0).pendingIntent == null){
+        if(alarms.size()>0){
+            if(alarms.get(0).pendingIntent == null){
                 Log.i("main", "pi was null");
             }
             else{
@@ -52,24 +59,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-
-        //in the future I can create an activity separate from main that loads the alarms, that way it only gets loaded once.
-
-        alarms = AlarmSaver.list;
-        Log.i(TAG, "number of alarms : " + alarms.size());
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         //improves performance since the list stays a single size
         recyclerView.setHasFixedSize(true);
+        //if no alarms, no list will show
         if(alarms.size()<=0){
             recyclerView.setVisibility(View.GONE);
         }
-
+        //This message only gets displayed if the user has 0 alarms
         TextView textView = (TextView) findViewById(R.id.textView3);
         if(alarms.size()>0){
             textView.setVisibility(View.GONE);
         }
-
-
 
         //using a linear layout
         layoutManager = new LinearLayoutManager(this);
@@ -92,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else{
             editButton.setOnClickListener(this);
         }
-
-
     }
 
     @Override

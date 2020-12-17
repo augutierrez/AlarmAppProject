@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import AlarmClasses.Alarm;
+import AlarmClasses.AlarmSaver;
+
 
 public class MakeAlarmActivity extends Activity implements View.OnClickListener{
     AlarmManager alarmManager;
@@ -23,8 +26,9 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
     Intent intent;
     TimePicker tp; // the time chosen
     EditText message;
+    Button saveButton;
+    String TAG = "MakeAlarmActivity";
 
-   private static Button saveButton = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,10 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         //startActivity(intent);
     }
 
+    /**
+     * This method takes the information in the UI, creates a Calendar object out of it, creates an alarm and calls on TurnOnAlarm().
+     * At the end it saves the alarm to AlarmSaver
+     */
     public void startAlarm(){
         int hour = tp.getHour();
         int minute = tp.getMinute();
@@ -70,6 +78,7 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         String text = message.getText().toString();
 
         if(text.isEmpty()){
+            Log.i(TAG, "message was empty, putting Calendar date in place");
             text = sdf.format(cal.getTime());
         }
 
@@ -87,6 +96,9 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         startActivity(intent);
     }
 
+    /**
+     * TODO This might be useless code, check if anything calls this
+     */
     public void destroyAlarm(){
         alarmManager.cancel(pendingIntent); // this is needed to cancel the alarm before it even goes off
         stopService(intent); // this is needed to silence the alarm once it does go off

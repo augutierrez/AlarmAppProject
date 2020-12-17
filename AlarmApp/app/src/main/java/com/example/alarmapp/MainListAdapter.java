@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import AlarmClasses.Alarm;
+
 public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHolder> {
         private ArrayList<Alarm> listData;
 

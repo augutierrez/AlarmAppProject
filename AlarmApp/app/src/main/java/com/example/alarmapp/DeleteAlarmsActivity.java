@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import AlarmClasses.Alarm;
+import AlarmClasses.AlarmSaver;
+
 public class DeleteAlarmsActivity extends AppCompatActivity {
     /*
     If the clicking doesn't work too well, try extending View.OnClickListener, that way any click goes to the same method
