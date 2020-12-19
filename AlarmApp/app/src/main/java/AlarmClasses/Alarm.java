@@ -33,6 +33,12 @@ public class Alarm implements Serializable {
      */
     public Alarm(Calendar cal, String message){
         this.cal = cal;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd, EEE");
+        if(message.isEmpty()){
+            Log.i(TAG, "message was empty, putting Calendar date in place");
+            message = sdf.format(cal.getTime());
+        }
         this.message = message;
         switchWidget = true;
     }
