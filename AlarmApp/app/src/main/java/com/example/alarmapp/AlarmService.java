@@ -27,6 +27,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import java.io.IOException;
+import java.util.Calendar;
+
+import AlarmClasses.Alarm;
 
 public class AlarmService extends Service {
     MediaPlayer mediaPlayer;
@@ -39,6 +42,7 @@ public class AlarmService extends Service {
     int notificationID;
     String ACTION_SNOOZE = "snooze";
     String ACTION_CANCEL = "cancel";
+    NotificationManager notificationManager;
 
     @Nullable
     @Override
@@ -54,9 +58,13 @@ public class AlarmService extends Service {
         String action = intent.getAction();
         if(action == ACTION_SNOOZE){
             //snooze
+            Log.i(TAG, "snooze selected");
+            snooze();
         }
         else if(action == ACTION_CANCEL){
             //cancel
+            Log.i(TAG, "cancel selected");
+            cancel();
         }
         else{
             //start
@@ -68,7 +76,26 @@ public class AlarmService extends Service {
     @Override
     public void onCreate(){
         super.onCreate();
-        Log.i(TAG, "The service has been createdd");
+        Log.i(TAG, "The service has been created");
+    }
+
+    private void cancel(){
+        stopSelf();
+    }
+
+    private void snooze(){
+        // Create a new alarm 10 minutes away from now
+        int delay = 1; //change the delay by changing this variable
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, delay); // adding the delay to the calendar
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        String message = intent.getStringExtra("message");
+        Alarm alarm = new Alarm(cal, message);
+        alarm.turnOnAlarm(this);
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        stopForeground(true);
     }
 
     private void startAlarm(){
@@ -79,7 +106,6 @@ public class AlarmService extends Service {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag");
         wakeLock.acquire();
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
 
         mediaPlayer = new MediaPlayer();
         try {
@@ -131,28 +157,34 @@ public class AlarmService extends Service {
 
         Log.i(TAG, "message is : " + message);
 
-        Intent intent1 = new Intent(context, AlarmOnActivity.class);
+        Intent intent1 = new Intent(AlarmService.this, AlarmOnActivity.class);
         intent1.putExtra("message", message);
         intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
 
-        ///////////////////////////////////////////////////////////////////////////////////
         //TODO make sure to pass the other extras
         //TODO add an alarm ID as an extra to be able to circle back
-        Intent snooze = new Intent(context, AlarmService.class);
+
+        int requestID = (int) System.currentTimeMillis();
+
+        Intent snooze = new Intent(AlarmService.this, AlarmService.class);
         snooze.setAction(ACTION_SNOOZE);
+        //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //snooze.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         snooze.putExtra("notificationID", notificationID);
-        PendingIntent snoozePendingIntent = PendingIntent.getActivity(context, 0, snooze, 0);
+        snooze.putExtra("message", intent.getStringExtra("message"));
+        PendingIntent snoozePendingIntent = PendingIntent.getService(context, requestID, snooze, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        Intent cancel = new Intent(context, AlarmService.class);
-        snooze.setAction(ACTION_CANCEL);
-        snooze.putExtra("notificationID", notificationID);
-        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, 0, cancel, 0);
+        Intent cancel = new Intent(AlarmService.this, AlarmService.class);
+        cancel.setAction(ACTION_CANCEL);
+        cancel.putExtra("notificationID", notificationID);
+        cancel.putExtra("message", intent.getStringExtra("message"));
+        PendingIntent cancelPendingIntent = PendingIntent.getService(context, requestID, cancel, PendingIntent.FLAG_CANCEL_CURRENT);
 
-
+        //TODO set auto timeout that snoozes the alarm for the user
 
         //TODO take away the activity,make it so only the notification is needed to cancel the alarm.
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(channelID, "My Notifications", NotificationManager.IMPORTANCE_HIGH);
@@ -174,12 +206,11 @@ public class AlarmService extends Service {
                 .setContentText(message)
                 .setContentIntent(pendingIntent)
                 .setContentInfo("Alarm fired")
-                .addAction(R.drawable.snooze, "snooze", snoozePendingIntent);
-        //notificationManager.notify(1, notificationBuilder.build());
-
+                .addAction(R.drawable.snooze, "snooze", snoozePendingIntent)
+                .addAction(R.drawable.snooze, "cancel", cancelPendingIntent);
 
         Notification notification = notificationBuilder.build();
-        context.startActivity(intent1); //have this here incase theyre on the app already
+        //context.startActivity(intent1); //have this here incase theyre on the app already
         return notification;
     }
 

@@ -74,13 +74,7 @@ public class MakeAlarmActivity extends Activity implements View.OnClickListener{
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd, EEE");
         String text = message.getText().toString();
-
-        if(text.isEmpty()){
-            Log.i(TAG, "message was empty, putting Calendar date in place");
-            text = sdf.format(cal.getTime());
-        }
 
         //saving
         Alarm alarm = new Alarm(cal, text);
